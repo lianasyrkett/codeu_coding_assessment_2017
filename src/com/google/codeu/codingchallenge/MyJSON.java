@@ -12,43 +12,63 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.codeu.codingchallenge;
-
 import java.util.Collection;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
 
 final class MyJSON implements JSON {
 
-  @Override
-  public JSON getObject(String name) {
-    // TODO: implement this
-    return null;
-  }
+    private Map<String, Object> myValues = new HashMap();
 
-  @Override
-  public JSON setObject(String name, JSON value) {
-    // TODO: implement this
-    return this;
-  }
+    @Override
+    public JSON getObject(String name) {
+        Object returnValue = myValues.get(name);
+        if (returnValue instanceof JSON) {
+            return (JSON) returnValue;
+        }
+        return null;
+    }
 
-  @Override
-  public String getString(String name) {
-    // TODO: implement this
-    return null;
-  }
+    @Override
+    public JSON setObject(String name, JSON value) {
+        myValues.put(name, value);
+        return this;
+    }
 
-  @Override
-  public JSON setString(String name, String value) {
-    // TODO: implement this
-    return this;
-  }
+    @Override
+    public String getString(String name) {
+        Object returnValue = myValues.get(name);
+        if (returnValue instanceof String) {
+            return (String) returnValue;
+        }
+        return null;
+    }
 
-  @Override
-  public void getObjects(Collection<String> names) {
-    // TODO: implement this
-  }
+    @Override
+    public JSON setString(String name, String value) {
+        myValues.put(name, value);
+        return this;
+    }
 
-  @Override
-  public void getStrings(Collection<String> names) {
-    // TODO: implement this
-  }
+    @Override
+    public void getObjects(Collection<String> names) {
+        Set<String> keys = myValues.keySet();
+        for (String key : keys) {
+            if (myValues.get(key) instanceof JSON) {
+                names.add(key);
+            }
+        }
+    }
+
+    @Override
+    public void getStrings(Collection<String> names) {
+        Set<String> keys = myValues.keySet();
+        for (String key : keys) {
+            if (myValues.get(key) instanceof String) {
+                names.add(key);
+            }
+        }
+    }
 }
+
