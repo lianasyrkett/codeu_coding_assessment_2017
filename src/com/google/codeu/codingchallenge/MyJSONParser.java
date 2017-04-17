@@ -20,7 +20,7 @@ final class MyJSONParser implements JSONParser {
     public JSON parse(String in) throws IOException {
         MyJSON json = new MyJSON();
 
-        if (isObject(in)) {
+        if (isObject(in) || isString(in)) {
             int openBracketIndex = in.indexOf('{');
 
             String inner = in.substring(openBracketIndex + 1,
@@ -31,14 +31,16 @@ final class MyJSONParser implements JSONParser {
             } else {
                 int colonIndex = inner.indexOf(':');
                 if (colonIndex == -1) {
-                    throw new IOException("Invalid string.");
+                    throw new IOException("Initial String passed in is "
+                            + "invalid.");
                 }
 
                 String name = inner.substring(0, colonIndex).trim();
 
                 if (name.charAt(0) != '\"' || name.charAt(name.length() - 1)
                         != '\"') {
-                    throw new IOException("Invalid string.");
+                    throw new IOException("Initial String passed in is "
+                            + "invalid.");
                 } else {
                     name = name.substring(1, name.length() - 1);
 
@@ -52,12 +54,14 @@ final class MyJSONParser implements JSONParser {
                             pair = pair.trim();
                             int colonPairIndex = pair.indexOf(':');
                             if (colonPairIndex == -1) {
-                                throw new IOException("Invalid string.");
+                                throw new IOException("Initial String passed "
+                                        + "in is invalid.");
                             }
 
                             String pairName = pair.substring(0, colonPairIndex);
                             if (!isString(pairName)) {
-                                throw new IOException("Invalid string.");
+                                throw new IOException("Initial String passed "
+                                        + "in is invalid.");
                             }
 
                             pairName = pairName.substring(1,
@@ -65,7 +69,8 @@ final class MyJSONParser implements JSONParser {
                             String pairValue = pair.substring(
                                     colonPairIndex + 1).trim();
                             if (!isString(pairValue)) {
-                                throw new IOException("Invalid string.");
+                                throw new IOException("Initial String passed "
+                                        + "in is invalid.");
                             }
 
                             pairValue = pairValue.substring(1,
@@ -75,28 +80,8 @@ final class MyJSONParser implements JSONParser {
                     }
                 }
             }
-        } else if (isString(in)) {
-            int colonIndex = in.indexOf(':');
-            if (colonIndex == -1) {
-                throw new IOException("Invalid string.");
-            }
-
-            String name = in.substring(0, colonIndex).trim();
-
-            if (name.charAt(0) != '\"' || name.charAt(name.length() - 1)
-                    != '\"') {
-                throw new IOException("Invalid string.");
-            } else {
-                name = name.substring(1, name.length() - 1);
-                int colonPairIndex = name.indexOf(':');
-                String pairValue = name.substring(colonPairIndex + 1).trim();
-
-
-                pairValue = pairValue.substring(1, pairValue.length() - 1);
-                json.setString(name, pairValue);
-            }
         } else {
-            throw new IOException("Invalid string.");
+            throw new IOException("Initial String passed in is invalid.");
         }
         return json;
     }
